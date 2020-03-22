@@ -4,10 +4,10 @@ from PIL import Image
 import random
 import os
 import shutil
+import progress.bar
 
 
-
-def genIDs(count=5):
+def genIDs(count):
     '''
     Returns a list of unique identification codes.
     '''
@@ -38,10 +38,15 @@ if __name__ == '__main__':
     shutil.rmtree('output') if os.path.exists('output') else False          # will clear output directory after each run
     os.makedirs('output') if not os.path.exists('output') else False
 
+    print("Welcome to the Second Harvest QR generation utility!")
+    print()
+    count = int(input("Number of codes to generate: "))
+
     # generate id codes
-    ids = genIDs(count=10)
+    ids = genIDs(count)
 
     # iterate through each id
+    bar = progress.bar.Bar('Generating QR codes', max=count)
     for idd in ids:
         qr = qrcode.QRCode(
             version=1,                                              # 21x21 matrix
@@ -58,3 +63,8 @@ if __name__ == '__main__':
         pasteLogo(img, 'assets/logo_trans_fill.png', scl=0.3)
         
         img.save('output/'+str(idd)+'.png')
+        bar.next()
+    bar.finish()
+
+    input('Operation successful! Press any key to quit...')
+    
